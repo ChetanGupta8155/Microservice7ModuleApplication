@@ -1,0 +1,98 @@
+server:
+  port: 2023
+
+spring:
+  application:
+    name: APIGATEWAY
+  cloud:
+    gateway:
+      routes:
+        - id: Customer
+          uri: lb://Customer
+          predicates:
+            - Path=/customers/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: Customer
+                fallbackuri: forward:/customerfallback
+
+        - id: Product
+          uri: lb://Product
+          predicates:
+            - Path=/products/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: Product
+                fallbackuri: forward:/productfallback
+
+
+        - id: Orders
+          uri: lb://Orders
+          predicates:
+            - Path=/orderss/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: Orders
+                fallbackuri: forward:/ordersfallback
+
+
+        - id: Users
+          uri: lb://Users
+          predicates:
+            - Path=/userss/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: Users
+                fallbackuri: forward:/usersfallback
+
+
+        - id: Shipment
+          uri: lb://Shipment
+          predicates:
+            - Path=/shipments/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: Shipment
+                fallbackuri: forward:/shipmentfallback
+
+
+        - id: Payment
+          uri: lb://Payment
+          predicates:
+            - Path=/payments/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: Payment
+                fallbackuri: forward:/paymentfallback
+
+
+        - id: Cart
+          uri: lb://Cart
+          predicates:
+            - Path=/carts/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: Cart
+                fallbackuri: forward:/cartfallback
+
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 4000
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream
